@@ -7,8 +7,10 @@ A simple local password manager written in Python and MariaDB. Uses [pbkdf2](htt
 You need to have python3 to run this on Windows, Linux or MacOS
 ## Linux
 ### Install Python Requirements
-```sudo apt install python3-pip```
-```pip install -r requirements.txt```
+```
+sudo apt install python3-pip
+pip install -r requirements.txt
+```
 
 ### MariaDB
 #### Install MariaDB on linux with apt
