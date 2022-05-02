@@ -3,6 +3,7 @@ import sys
 import string
 import random
 import hashlib
+import sys
 from getpass import getpass
 
 from utils.dbconfig import dbconfig
@@ -17,7 +18,9 @@ def checkConfig():
 	cursor = db.cursor()
 	query = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA  WHERE SCHEMA_NAME = 'pm'"
 	cursor.execute(query)
-	if len(cursor.fetchall())!=0:
+	results = cursor.fetchall()
+	db.close()
+	if len(results)!=0:
 		return True
 	return False
 
@@ -26,10 +29,10 @@ def generateDeviceSecret(length=10):
 	return ''.join(random.choices(string.ascii_uppercase + string.digits, k = length))
 
 
-def config():
+def make():
 	if checkConfig():
 		printc("[red][!] Already Configured! [/red]")
-		sys.exit(0)
+		return
 
 	printc("[green][+] Creating new config [/green]")
 
@@ -86,5 +89,50 @@ def config():
 	db.close()
 
 
+def delete():
+	printc("[red][-] Deleting a config clears the device secret and all your entries from the database. This means you will loose access to all your passwords that you have added into the password manager until now. Only do this if you truly want to 'destroy' all your entries. This action cannot be undone. [/red]")
 
-config()
+	while 1:
+		op = input("So are you sure you want to continue? (y/N): ")
+		if op.upper() == "Y":
+			break
+		if op.upper() == "N" or op.upper == "":
+			sys.exit(0)
+		else:
+			continue
+
+	printc("[green][-][/green] Deleting config")
+
+
+	if not checkConfig():
+		printc("[yellow][-][/yellow] No configuration exists to delete!")
+		return
+
+	db = dbconfig()
+	cursor = db.cursor()
+	query = "DROP DATABASE pm"
+	cursor.execute(query)
+	db.commit()
+	db.close()
+	printc("[green][+] Config deleted![/green]")
+
+def remake():
+	printc("[green][+][/green] Remaking config")
+	delete()
+	make()
+
+
+if __name__ == "__main__":
+
+	if len(sys.argv)!=2:
+		print("Usage: python config.py <make/delete/remake>")
+		sys.exit(0)
+
+	if sys.argv[1] == "make":
+		make()
+	elif sys.argv[1] == "delete":
+		delete()
+	elif sys.argv[1] == "remake":
+		remake()
+	else:
+		print("Usage: python config.py <make/delete/remake>")

@@ -69,9 +69,21 @@ GRANT ALL PRIVILEGES ON *.* TO 'pm'@localhost IDENTIFIED BY 'password';
 
 You need to first configure the password manager by choosing a MASTER PASSWORD. This config step is only required to be executed once.
 ```
-python config.py
+python config.py make
 ```
+The above command will make a new configuration by asking you to choose a MASTER PASSWORD.
 This will generate the DEVICE SECRET, create db and required tables.
+
+```
+python config.py delete
+```
+The above command will delete the existing configuration. Doing this will completely delete your device secret and all your entries and you will loose all your passwords. So be aware!
+
+```
+python config.py remake
+```
+The above command will first delete the existing configuration and create a fresh new configuration by asking you to choose a MASTER PASSWORD, generate the DEVICE SECRET, create the db and required tables.
+
 ### Usage
 ```
 python pm.py -h
